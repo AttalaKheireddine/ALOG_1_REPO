@@ -49,7 +49,7 @@ public class SqliteTest : MonoBehaviour
         string query = "SELECT * FROM patient";
         cmnd_read.CommandText = query;
         reader = cmnd_read.ExecuteReader();
-
+        
         while (reader.Read())
         {
             Debug.Log("id: " + reader[0].ToString());

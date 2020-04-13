@@ -11,14 +11,11 @@ public class Test : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        IDataReader reader = SQLQueryManager.Instance.GetSelectQueryResult("SELECT * FROM Patient");
-
-        while (reader.Read())
+        Converter.Instance.MakeNewRDV("2020-12-11 23:56:38", 2, "something stupid");
+        List<RDV> rdvs = Converter.Instance.GetRDVsFromQuery("SELECT * FROM RDV;", new Dictionary<string, string>());
+        foreach(RDV p in rdvs)
         {
-            Debug.Log("id: " + reader[0].ToString());
-            Debug.Log("name: " + reader[1].ToString());
-            Debug.Log("surname: " + reader[2].ToString());
-            Debug.Log("condition: " + reader[3].ToString());
+            Debug.Log(string.Format("patient id = {0} name = {1} surname = {2}", p.id,p.description,p.patientId));
         }
     }
 }

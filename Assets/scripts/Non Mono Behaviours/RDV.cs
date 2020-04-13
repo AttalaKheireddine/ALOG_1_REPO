@@ -6,22 +6,30 @@ using Mono.Data.Sqlite;
 
 public class RDV : DatabaseObject
 {
-    int? id;   //becasue sometimes the object is new so its id is not mattering
-    string dateTime;
-    int patientId;
-    string description;
+    public int? id;   //becasue sometimes the object is new so its id is not mattering
+    public string dateTime;
+    public int patientId;
+    public string description;
 
     const string dateTimeParameter = "@dateTime";
     const string patientIdParameter = "@patientId";
     const string idParameter = "@id";
     const string descriptionPrameter = "@description";
 
-    public RDV(int? id, string dateTime, int patientId, string description)
+    public RDV(int? id,  int patientId, string dateTime, string description)
     {
         this.id = id;
         this.dateTime = dateTime;
         this.patientId = patientId;
         this.description = description;
+    }
+
+    public RDV(IDataReader reader)
+    {
+        this.id = int.Parse(reader[0].ToString());
+        this.dateTime = reader[2].ToString();
+        this.patientId = int.Parse(reader[1].ToString());
+        this.description = reader[3].ToString();
     }
 
     public void AddToDatabaseAsNew()
@@ -32,8 +40,9 @@ public class RDV : DatabaseObject
         parameters.Add(patientIdParameter,patientId.ToString());
         parameters.Add(descriptionPrameter,description);
 
-        string queryText = string.Format("INSERT INTO {0} (patientId,time, description) values ({1},{2},{3})"
-            , tableName,dateTime,description);
+        string queryText = string.Format("INSERT INTO {0} (patientId,time, description) values ({1},'{2}','{3}')"
+            , tableName,patientId,dateTime,description);
+        Debug.Log(queryText);
         SQLQueryManager.Instance.ExecuteNonSelectQuery(queryText, parameters);
     }
 
@@ -46,7 +55,7 @@ public class RDV : DatabaseObject
         parameters.Add(dateTimeParameter, dateTime);
         parameters.Add(patientIdParameter, patientId.ToString());
 
-        string queryText = string.Format("UPDATE {0} time = {1}, patientId = {2}, description = {3}  WHERE id ={4} ",
+        string queryText = string.Format("UPDATE {0} time = '{1}', patientId = {2}, description = '{3}'  WHERE id ={4} ",
             tableName, dateTimeParameter, patientIdParameter, descriptionPrameter, idParameter);
         SQLQueryManager.Instance.ExecuteNonSelectQuery(queryText, parameters);
     }
